@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  # Python FastAPI backend
+  backend:
+    build: ./backend
+    ports:
+      # Map machine port to container port
+      - "8000:8000"
+    volumes:
+      # Mount local code so changes reflect without rebuilding
+      - ./backend:/app
+      # Persist ChromaDB vector store between restarts
+      - chroma_db:/app/chroma_db
+    env_file:
+      # Load API keys and config from .env file
+      - .env
+    restart: unless-stopped
+
+  # React TypeScript frontend
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    volumes:
+      # Mount local code for hot reload
+      - ./frontend:/app
+      # Keep node_modules inside container, not on host
+      - /app/node_modules
+    depends_on:
+      # Wait for backend to be ready before starting
+      - backend
+    restart: unless-stopped
+
+# Named volumes that persist beyond container lifecycle
+volumes:
+  chroma_db:
