@@ -1,0 +1,26 @@
+# Web framework
+fastapi
+
+# ASGI server that runs FastAPI
+uvicorn
+
+# Anthropic Claude API SDK
+anthropic
+
+# Vector database for RAG retrieval
+chromadb
+
+# Local embedding model
+sentence-transformers
+
+# PDF text extraction
+pymupdf
+
+# Loads environment variables from .env file
+python-dotenv
+
+# Required for FastAPI file upload handling
+python-multipart
+
+# Data validation and schema enforcement
+pydantic
