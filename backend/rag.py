@@ -7,14 +7,11 @@ from dotenv import load_dotenv
 # Load environment variables from .env file into the application
 load_dotenv()
 
-
 # Initialise ChromaDB with persistent local storage
 chroma_client = chromadb.PersistentClient(path="./chroma_db")
 
-# Use sentence-transformers for embeddings - free, runs locally, no API key needed
-embedding_fn = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="all-MiniLM-L6-v2"
-)
+# Use ChromaDB's default embedding function - lighter than sentence-transformers, no PyTorch dependency
+embedding_fn = embedding_functions.DefaultEmbeddingFunction()
 
 # Single collection for all documents, metadata distinguishes type
 collection = chroma_client.get_or_create_collection(
@@ -32,10 +29,11 @@ def extract_text_from_pdf(file_bytes: bytes) -> str:
     return text
 
 
-def chunk_text(text: str, chunk_size: int = 500, overlap: int = 50) -> list[str]:
+def chunk_text(text: str, chunk_size: int = 1500, overlap: int = 200) -> list[str]:
     """
     Split text into overlapping chunks.
     Overlap ensures context is not lost at chunk boundaries.
+    chunk_size increased to 1500 for richer context per retrieved chunk.
     """
     chunks = []
     start = 0
@@ -80,20 +78,40 @@ def ingest_document(file_bytes: bytes, doc_id: str, doc_type: str, label: str) -
 
 def retrieve_relevant_chunks(query: str, n_results: int = 5) -> list[dict]:
     """
-    Find the most semantically similar chunks to the query.
-    Returns chunks with their metadata so Claude knows which document they came from.
+    Retrieve relevant chunks from both resume and job descriptions separately.
+    Ensures both document types are always represented in Claude's context.
     """
-    results = collection.query(
-        query_texts=[query],
-        n_results=n_results
-    )
-
     chunks = []
-    for i, doc in enumerate(results["documents"][0]):
-        chunks.append({
-            "content": doc,
-            "metadata": results["metadatas"][0][i]
-        })
+
+    # Always retrieve from resume
+    try:
+        resume_results = collection.query(
+            query_texts=[query],
+            n_results=n_results,
+            where={"doc_type": "resume"}
+        )
+        for i, doc in enumerate(resume_results["documents"][0]):
+            chunks.append({
+                "content": doc,
+                "metadata": resume_results["metadatas"][0][i]
+            })
+    except Exception:
+        pass
+
+    # Always retrieve from job descriptions
+    try:
+        jd_results = collection.query(
+            query_texts=[query],
+            n_results=n_results,
+            where={"doc_type": "job_description"}
+        )
+        for i, doc in enumerate(jd_results["documents"][0]):
+            chunks.append({
+                "content": doc,
+                "metadata": jd_results["metadatas"][0][i]
+            })
+    except Exception:
+        pass
 
     return chunks
 
