@@ -10,9 +10,6 @@ anthropic
 # Vector database for RAG retrieval
 chromadb
 
-# Local embedding model
-sentence-transformers
-
 # PDF text extraction
 pymupdf
 
