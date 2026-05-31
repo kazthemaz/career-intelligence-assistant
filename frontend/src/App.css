@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
 * {
   margin: 0;
   padding: 0;
@@ -5,49 +7,146 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #0f0f0f;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #121212;
   color: #e8e8e8;
   min-height: 100vh;
 }
 
 .app {
+  position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.matrix-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.app-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
 }
 
 .app-header {
-  padding: 24px 32px;
-  border-bottom: 1px solid #2a2a2a;
-  background: #161616;
+  padding: 24px 32px 20px;
+  text-align: center;
+  border-bottom: 1px solid #262626;
+  background: rgba(24, 24, 24, 0.93);
+  position: relative;
 }
 
+.app-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #e24b4a, transparent);
+}
+
+.logo-dots {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.dot-1 { background: #e24b4a; }
+.dot-2 { background: #9a2f2f; }
+.dot-3 { background: #e24b4a; opacity: 0.3; }
+
 .app-header h1 {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 4px;
+  color: #f0f0f0;
+  margin-bottom: 5px;
+  letter-spacing: -0.03em;
 }
 
 .app-header p {
-  font-size: 14px;
+  font-size: 16px;
+  color: #777;
+}
+
+.steps-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 13px 32px;
+  background: rgba(24, 24, 24, 0.93);
+  border-bottom: 1px solid #222;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.step-num {
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background: #e24b4a;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-text {
+  font-size: 14.5px;
   color: #888;
+}
+
+.step-text strong {
+  color: #bbb;
+  font-weight: 500;
+}
+
+.step-sep {
+  width: 28px;
+  height: 1px;
+  background: #2a2a2a;
+  flex-shrink: 0;
 }
 
 .app-main {
   display: flex;
   flex: 1;
-  height: calc(100vh - 73px);
+  overflow: hidden;
 }
 
 .sidebar {
-  width: 320px;
-  min-width: 320px;
-  border-right: 1px solid #2a2a2a;
-  background: #161616;
+  width: 285px;
+  min-width: 285px;
+  border-right: 1px solid #222;
+  background: rgba(24, 24, 24, 0.93);
   overflow-y: auto;
-  padding: 24px;
+  padding: 20px;
 }
 
 .chat-section {
@@ -55,4 +154,5 @@ body {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  background: rgba(18, 18, 18, 0.88);
 }

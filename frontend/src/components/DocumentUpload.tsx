@@ -60,12 +60,31 @@ export default function DocumentUpload({ documents, setDocuments }: Props) {
     }
   }
 
+  const resume = documents.find(d => d.doc_type === "resume")
+  const jobDescriptions = documents.filter(d => d.doc_type === "job_description")
+
   return (
     <div className="upload-panel">
-      <h2>Documents</h2>
 
-      <div className="upload-section">
-        <p className="upload-label">CV / Resume</p>
+      <div className="sidebar-section">
+        <h2>Your CV</h2>
+
+        {resume && (
+          <div className="document-item">
+            <div className="doc-icon">📄</div>
+            <div>
+              <p className="doc-label">{resume.label}</p>
+              <p className="doc-type">Resume</p>
+            </div>
+            <button
+              className="delete-btn"
+              onClick={() => deleteDocument(resume.doc_id)}
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <input
           ref={resumeRef}
           type="file"
@@ -81,12 +100,29 @@ export default function DocumentUpload({ documents, setDocuments }: Props) {
           onClick={() => resumeRef.current?.click()}
           disabled={uploading}
         >
-          {uploading ? "Uploading..." : "Upload CV"}
+          {resume ? (uploading ? "Uploading..." : "Replace CV") : (uploading ? "Uploading..." : "Upload CV")}
         </button>
       </div>
 
-      <div className="upload-section">
-        <p className="upload-label">Job Descriptions</p>
+      <div className="sidebar-section">
+        <h2>Job Descriptions</h2>
+
+        {jobDescriptions.map(doc => (
+          <div key={doc.doc_id} className="document-item">
+            <div className="doc-icon">💼</div>
+            <div>
+              <p className="doc-label">{doc.label}</p>
+              <p className="doc-type">Job Description</p>
+            </div>
+            <button
+              className="delete-btn"
+              onClick={() => deleteDocument(doc.doc_id)}
+            >
+              ✕
+            </button>
+          </div>
+        ))}
+
         <input
           ref={jdRef}
           type="file"
@@ -102,33 +138,12 @@ export default function DocumentUpload({ documents, setDocuments }: Props) {
           onClick={() => jdRef.current?.click()}
           disabled={uploading}
         >
-          {uploading ? "Uploading..." : "Add Job Description"}
+          {uploading ? "Uploading..." : "Add job description"}
         </button>
       </div>
 
       {error && <p className="error-message">{error}</p>}
 
-      {documents.length > 0 && (
-        <div className="document-list">
-          <p className="upload-label">Loaded documents</p>
-          {documents.map(doc => (
-            <div key={doc.doc_id} className="document-item">
-              <div>
-                <p className="doc-label">{doc.label}</p>
-                <p className="doc-type">
-                  {doc.doc_type === "resume" ? "CV" : "Job Description"}
-                </p>
-              </div>
-              <button
-                className="delete-btn"
-                onClick={() => deleteDocument(doc.doc_id)}
-              >
-                ✕
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

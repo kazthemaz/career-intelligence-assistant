@@ -76,42 +76,28 @@ def ingest_document(file_bytes: bytes, doc_id: str, doc_type: str, label: str) -
     return len(chunks)
 
 
-def retrieve_relevant_chunks(query: str, n_results: int = 5) -> list[dict]:
+def retrieve_relevant_chunks(query: str, n_results: int = 3) -> list[dict]:
     """
-    Retrieve relevant chunks from both resume and job descriptions separately.
-    Ensures both document types are always represented in Claude's context.
+    Retrieve chunks from every document individually to ensure all are represented.
+    Queries by doc_id so each document contributes context regardless of similarity scores.
     """
     chunks = []
+    documents = list_documents()
 
-    # Always retrieve from resume
-    try:
-        resume_results = collection.query(
-            query_texts=[query],
-            n_results=n_results,
-            where={"doc_type": "resume"}
-        )
-        for i, doc in enumerate(resume_results["documents"][0]):
-            chunks.append({
-                "content": doc,
-                "metadata": resume_results["metadatas"][0][i]
-            })
-    except Exception:
-        pass
-
-    # Always retrieve from job descriptions
-    try:
-        jd_results = collection.query(
-            query_texts=[query],
-            n_results=n_results,
-            where={"doc_type": "job_description"}
-        )
-        for i, doc in enumerate(jd_results["documents"][0]):
-            chunks.append({
-                "content": doc,
-                "metadata": jd_results["metadatas"][0][i]
-            })
-    except Exception:
-        pass
+    for doc in documents:
+        try:
+            results = collection.query(
+                query_texts=[query],
+                n_results=n_results,
+                where={"doc_id": doc["doc_id"]}
+            )
+            for i, content in enumerate(results["documents"][0]):
+                chunks.append({
+                    "content": content,
+                    "metadata": results["metadatas"][0][i]
+                })
+        except Exception:
+            pass
 
     return chunks
 
