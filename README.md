@@ -8,7 +8,7 @@ You can ask the chatbot anything: how your skills match a role, where the gaps a
 
 Every fit analysis produces a match score out of 100. Scores of 60 and above come with a recommendation to apply, along with positioning advice and interview prep. Scores below 60 come with an honest breakdown of what is missing and what to work on before applying.
 
-![Career Intelligence Assistant](screenshots/screenshot.jpg)
+![Career Intelligence Assistant](screenshots/Screenshot.jpg)
 
 
 ---
